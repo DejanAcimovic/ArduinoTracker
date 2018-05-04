@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Simple markers</title>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+
+  </head>
+  <script src="/socket.io/socket.io.js"></script>
+	<script>
+
+		var socket = io.connect('localhost:3000');
+
+
+	</script>
+  <body>
+    <div id="map"></div>
+    <script>
+
+
+      function initMap() {
+        var map ;
+        var marker;
+		      var ajax = new XMLHttpRequest();
+
+        ajax.onreadystatechange = function(){
+              if(ajax.readyState == 4 && ajax.status == 200){
+				var myLatLng = JSON.parse(ajax.responseText);
+
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 4,
+          center: myLatLng
+        });
+        map_pomocna = map;
+
+			 marker = new google.maps.Marker({
+				  position: myLatLng,
+				  map: map,
+				  title: 'Kemin arduino'
+				});
+              }else{
+                //upisi gresku
+            }
+         }
+        ajax.open("GET", "http://localhost:3000/Lokacija", true);
+        ajax.send();
+
+        socket.on('news', function (data) {
+          marker.setPosition(JSON.parse(data));
+        });
+      }
+
+
+
+
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGg5jWlpsf6FJ2b-wiZUBBonS4Bg7hy7s&callback=initMap">
+    </script>
+  </body>
+</html>
